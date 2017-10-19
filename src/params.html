@@ -1,0 +1,101 @@
+import {Component, OnInit, OnDestroy} from '@angular/core';
+import {ActivatedRoute} from '@angular/router';
+
+@Component({
+selector: 'app-afteralaunch',
+templateUrl: './afteralaunch.component.html',
+styleUrls: ['./afteralaunch.component.css']
+})
+export class AfteralaunchComponent implements OnInit, OnDestroy {
+id: number;
+private sub: any;
+private sub2: any;
+state: string;
+code: string;
+
+constructor(private route: ActivatedRoute) {
+}
+
+ngOnInit(): void {
+this.sub = this.route.queryParams.subscribe(queryParams => {
+this.id = +queryParams['id']; // (+) converts string 'id' to a number
+this.code = queryParams['code'];
+this.state = queryParams['state'];
+
+// In a real app: dispatch action to load the details here.
+});
+
+this.sub2 = this.route.params.subscribe(params => {
+// this.id = +params['id']; // (+) converts string 'id' to a number
+//
+console.log(params);
+//
+// this.code = queryParams['code'];
+// this.state = queryParams['state'];
+
+// In a real app: dispatch action to load the details here.
+});
+}
+
+ngOnDestroy(): void {
+this.sub.unsubscribe();
+this.sub2.unsubscribe();
+}
+
+
+//  getUrlParameter(sParam: string) {
+//   const sPageURL = window.location.search.substring(1);
+//   const sURLVariables = sPageURL.split('&');
+//   for (let i = 0; i < sURLVariables.length; i++) {
+//     const sParameterName = sURLVariables[i].split('=');
+//     if (sParameterName[0] === sParam) {
+//       const res = sParameterName[1].replace(/\+/g, '%20');
+//       return decodeURIComponent(res);
+//     }
+//   }
+//   this.state = this.getUrlParameter('state');
+// }
+}
+
+import {Component} from '@angular/core';
+
+@Component({
+selector: 'app-afteralaunch',
+templateUrl: './afteralaunch.component.html',
+styleUrls: ['./afteralaunch.component.css']
+})
+export class AfteralaunchComponent{
+state = this.getUrlParameter('state');
+code = this.getUrlParameter('code');
+params = JSON.parse(sessionStorage[this.state]);  // load app session
+tokenUri = this.params.tokenUri;
+clientId = this.params.clientId;
+secret = this.params.secret;
+serviceUri = this.params.serviceUri;
+redirectUri = this.params.redirectUri;
+data = {
+code: this.code,
+grant_type: 'authorization_code',
+redirect_uri: this.redirectUri
+};
+options = {
+url: this.tokenUri,
+type: 'POST',
+data: this.data
+};
+constructor() {
+}
+getUrlParameter(sParam: string) {
+const sPageURL = window.location.search.substring(1);
+const sURLVariables = sPageURL.split('&');
+for (let i = 0; i < sURLVariables.length; i++) {
+const sParameterName = sURLVariables[i].split('=');
+if (sParameterName[0] === sParam) {
+const res = sParameterName[1].replace(/\+/g, '%20');
+return decodeURIComponent(res);
+}
+}
+}
+}
+
+
